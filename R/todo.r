@@ -5,6 +5,7 @@
 ### ==================
 ### = 1. Get it working =
 ### ==================
+× 
 # 1. # TODO Upload existing data
 # 	1. Add copy of existing excel spreadsheet
 # 	2. create rdata for speed (each release)
@@ -57,3 +58,21 @@
 ### =================
 # 1. Create system to store, document, and run automated searches on g scholar/pmed and detect candidate new papers
 # 2. Checking/adding for credit/authorship/money if grant or philanthropy available?
+
+
+# ===========================
+# = 6. Boiler plate abstract, introduction, methods, and disscussion =
+# ===========================
+
+# 1. Refs for the topic, and the meta-analysis.
+# 2. Build templates.
+# 3. Automate hypotheses/discussion.
+
+
+# ===========================
+# = 7. Support bibliography =
+# ===========================
+
+# 1. Use [bibtex](https://cran.r-project.org/web/packages/bibtex/bibtex.pdf) package
+# 2. build reference for meta-analysis from dois in source list and citations in the introduction
+

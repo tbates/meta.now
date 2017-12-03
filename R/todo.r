@@ -5,7 +5,7 @@
 ### ==================
 ### = 1. Get it working =
 ### ==================
-× 
+
 # 1. # TODO Upload existing data
 # 	1. Add copy of existing excel spreadsheet
 # 	2. create rdata for speed (each release)

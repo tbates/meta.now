@@ -1,0 +1,74 @@
+# Meta-analysis of GxSES effects on Cognitive Ability
+
+```{r setup, include = FALSE, cache = FALSE}
+library(meta.now); library(RefManageR)
+genbib <- ReadBib(system.file("extdata", "general.bib", package = "meta.now"))
+# 1. open the bib for this project
+bib    <- ReadBib(system.file("extdata/GxSES", "bib_GxSES.bib", package = "meta.now"), check = FALSE)
+BibOptions(check.entries = FALSE, style = "markdown", cite.style = "authoryear", bib.style = "numeric")
+
+# 2. open the meta-file for this project
+# 3. check it's all up to date
+	# 1. Add any new dois for refs, report errors
+
+```
+
+## Introduction
+`r AutoCite(bib, "Bates2013", before = "e.g., ")`
+
+
+
+## Results
+```{r fig.width=3.5}
+plot(cars)
+```
+
+## Discussion
+
+**Data References**
+
+```{r results = "asis", echo = FALSE}
+PrintBibliography(bib, .opts = list(check.entries = FALSE, sorting = "ynt"))
+```
+
+**References for packages and methods used**
+
+```{r results = "asis", echo = FALSE}
+PrintBibliography(genbib)
+```
+
+
+### Citing
+1. In text `r Citet(bib, "loh")`
+2. In parentheses `r AutoCite(bib, "baez/online", before = "e.g., ")`.
+3. Without citing = `r NoCite(bib = bib, title = "CTAN")`
+4. methods
+	1. by key
+	2. using `SearchBib()`
+		1 by type `r Citet(bib, bibtype = "Report", .opts = list(hyperlink = "to.doc"))`.
+		1. From another bibliography: `r AutoCite(bib2, title = "binary longitudinal data")`.
+		2. By author: `r TextCite(bib, author = "Aristotle")`.  
+		3. By other fields: `r TextCite(bib, eprinttype = "arxiv")`.
+
+### Setting options
+  * Setup chunk at the start
+  * Anywhere with <code>BibOptions</code>
+  * List in `.opts` argument to cite functions.
+  * Can mix `"authoyear"` and `"numeric"`style.
+
+  
+## hyperlinking
+1. default = open document in a new window (see `?open.BibEntry`). 
+2. no link `r AutoCite(bib, location = "Uppsala", .opts = list(hyperlink = FALSE))`.
+
+## Plots
+  
+```{r fig.width=3.5}
+plot(cars)
+```
+
+
+```{r fig.height=3}
+plot(cars)
+```
+

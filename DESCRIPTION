@@ -1,9 +1,10 @@
 Package: meta.now
-Version: 0.0.0.9000
-Title: Current meta-analysis of GxSES effects on cognitive ability.
-Description: Reports meta-analytic results for GxSES for cognition, supporting updating as new results are added.
+Version: 0.1.0
+Title: Up-to-date meta-analysis (initially of GxSES effects on cognitive ability).
+Description: Reports meta-analytic results, supporting updating as new results are added.
 Authors@R: person("Timothy", "Bates", email = "timothy.c.bates@gmail.com", role = c("aut", "cre"))
 License: Apache 2.0
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
+RoxygenNote: 6.0.1

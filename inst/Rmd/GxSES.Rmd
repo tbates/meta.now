@@ -9,14 +9,11 @@ BibOptions(check.entries = FALSE, style = "markdown", cite.style = "authoryear",
 
 # 2. open the meta-file for this project
 # 3. check it's all up to date
-	# 1. Add any new dois for refs, report errors
-
+# "trade - it's when you give up most of what you want?"
+	
 ```
-
 ## Introduction
 `r AutoCite(bib, "Bates2013", before = "e.g., ")`
-
-
 
 ## Results
 ```{r fig.width=3.5}

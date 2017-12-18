@@ -1,15 +1,29 @@
 # Meta-analysis of GxSES effects on Cognitive Ability
 
 ```{r setup, include = FALSE, cache = FALSE}
-library(meta.now); library(RefManageR)
-genbib <- ReadBib(system.file("extdata", "general.bib", package = "meta.now"))
+library(meta.now);
+library(RefManageR)
+library(metaSEM)
+library("metaSEM")
+library("ggplot2")
+library("ggthemes")
+
+me = "GxSES"
+genbib = RefManageR::ReadBib(system.file("extdata", "general.bib", package = "meta.now"))
 # 1. open the bib for this project
-bib    <- ReadBib(system.file("extdata/GxSES", "bib_GxSES.bib", package = "meta.now"), check = FALSE)
+bib = ReadBib(system.file(paste0("extdata/", me), paste0("bib_", me, ".bib"), package = "meta.now"), check = FALSE)
 BibOptions(check.entries = FALSE, style = "markdown", cite.style = "authoryear", bib.style = "numeric")
 
 # 2. open the meta-file for this project
-# 3. check it's all up to date
-# "trade - it's when you give up most of what you want?"
+# meta_make()
+df = gdata::read.xls(system.file(paste0("extdata/", me), paste0("data_", me, ".xlsx"), package = "meta.now"), stringsAsFactors=FALSE)
+# replace spaces (which are imported as periods) with "_"
+df = umx_rename(df, "_", grep="\\.");
+dfUS=df[df$US==1,]
+dfEU=df[df$US==0,]
+
+
+# 3. # TODO Check it's all up to date
 	
 ```
 ## Introduction
@@ -17,7 +31,76 @@ BibOptions(check.entries = FALSE, style = "markdown", cite.style = "authoryear",
 
 ## Results
 ```{r fig.width=3.5}
-plot(cars)
+hist(df$a1)
+mean(df$a1)
+weighted.mean(df$a1,1/(df$k*df$a1_SE^2))
+
+weighted.mean(dfUS$a1,1/(dfUS$k*dfUS$a1_SE^2))
+
+weighted.mean(dfEU$a1,1/(dfEU$k*dfEU$a1_SE^2))
+
+# two level unconditional (Random Effects meta analysis)
+rmeta = meta(y = a1,v = a1_SE^2, data = df)
+summary(rmeta)
+
+# three level unconditional (intercept only)
+Model0 = meta3(y = a1,v = a1_SE^2,cluster = DataID,data = df,model.name = "3 level model")
+summary(Model0)
+
+# Three level US vs. Other
+Model1 = meta3(y = a1,v = a1_SE^2,x = US,cluster = DataID,data = df,model.name = "3 level model")
+summary(Model1)
+
+
+#weighted histogram
+p = ggplot(df,aes(x=a1,weight=1/(k*a1_SE^2)))
+p = p + geom_histogram(col="black",fill="light grey",bins = 15)
+p = p +labs(x = "Effect size", y = "Weighted count") + xlim(c(-.2, .2))
+p = p + theme_base() + theme(plot.background = element_rect( color= "white"))
+p
+
+# Weighted histogram US and not US (weight = reciprocal sampling variance)
+
+plotUS = ggplot(dfUS, aes(x = a1, weight = 1/(a1_SE^2)))
+plotUS = plotUS + geom_histogram(col = "black", fill = "light grey")
+plotUS = plotUS + labs(x = "Effect size", y = "Weighted count")
+plotUS = plotUS + xlim(c(-.3, .3))
+plotUS = plotUS + theme_base() + theme(plot.background = element_rect( color= "white")) + ggtitle("United States")
+plotUS = plotUS + theme(plot.title = element_text(hjust = 0.5))
+
+plotEU = ggplot(dfEU, aes(x = a1, weight = 1/(a1_SE^2)))
+plotEU = plotEU + geom_histogram(col = "black",fill = "light grey")
+plotEU = plotEU + ggtitle("Europe and Australia")
+plotEU = plotEU + labs(x = "Effect size", y= "Weighted count") + ggtitle("Europe and Australia")
+plotEU = plotEU + xlim(c(-.3, .3))
+plotEU = plotEU + theme_base() + theme(plot.background = element_rect(color = "white")) 
+plotEU = plotEU + theme(plot.title = element_text(hjust = 0.5))
+
+multiplot(plotUS, plotEU)
+
+# Weighted histogram US and not US (weights = reciprocal sampling variance and 1/k)
+binwidth
+plotUS = ggplot(dfUS, aes(x = a1, weight = 1/(k*a1_SE^2)))
+plotUS = plotUS + geom_histogram(col = "black",fill = "light grey")
+plotUS = plotUS + labs(x = "Effect size", y = "Weighted count")
+plotUS = plotUS + xlim(c(-.3, .3))
+plotUS = plotUS + theme_base()
+plotUS = plotUS + theme(plot.background = element_rect( color= "white"))
+plotUS = plotUS + ggtitle("United States")
+plotUS = plotUS + theme(plot.title = element_text(hjust = 0.5))
+
+plotEU = ggplot(dfEU,aes(x=a1,weight=1/(k*a1_SE^2)))
+plotEU = plotEU + geom_histogram(col="black",fill="light grey")
+plotEU = plotEU + labs(x="Effect size", y="Weighted count")
+plotEU = plotEU + xlim(c(-.3,.3))
+plotEU = plotEU + theme_base()
+plotEU = plotEU + theme(plot.background = element_rect( color= "white"))
+plotEU = plotEU + ggtitle("Europe and Australia")
+plotEU = plotEU + theme(plot.title = element_text(hjust = 0.5))
+
+multiplot(plotUS,plotEU)
+
+
 ```
 
 ## Discussion

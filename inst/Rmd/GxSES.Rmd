@@ -1,12 +1,12 @@
 # Meta-analysis of GxSES effects on Cognitive Ability
 
 ```{r setup, include = FALSE, cache = FALSE}
-library(meta.now);
-library(RefManageR)
-library(metaSEM)
+library("meta.now");
+library("RefManageR")
 library("metaSEM")
 library("ggplot2")
 library("ggthemes")
+library("cowplot"); # ggplot enhancer
 
 me = "GxSES"
 genbib = RefManageR::ReadBib(system.file("extdata", "general.bib", package = "meta.now"))
@@ -19,8 +19,9 @@ BibOptions(check.entries = FALSE, style = "markdown", cite.style = "authoryear",
 df = gdata::read.xls(system.file(paste0("extdata/", me), paste0("data_", me, ".xlsx"), package = "meta.now"), stringsAsFactors=FALSE)
 # replace spaces (which are imported as periods) with "_"
 df = umx_rename(df, "_", grep="\\.");
-dfUS=df[df$US==1,]
-dfEU=df[df$US==0,]
+# Make US and non US data sets
+dfUS = df[df$US == 1, ]
+dfEU = df[df$US == 0, ]
 
 
 # 3. # TODO Check it's all up to date
@@ -33,53 +34,70 @@ dfEU=df[df$US==0,]
 ```{r fig.width=3.5}
 hist(df$a1)
 mean(df$a1)
-weighted.mean(df$a1,1/(df$k*df$a1_SE^2))
+weighted.mean(df$a1  , 1/(df$k   * df$a1_SE^2)  , na.rm = TRUE)
+weighted.mean(dfUS$a1, 1/(dfUS$k * dfUS$a1_SE^2), na.rm = TRUE))
+weighted.mean(dfEU$a1, 1/(dfEU$k * dfEU$a1_SE^2), na.rm = TRUE))
 
-weighted.mean(dfUS$a1,1/(dfUS$k*dfUS$a1_SE^2))
-
-weighted.mean(dfEU$a1,1/(dfEU$k*dfEU$a1_SE^2))
-
-# two level unconditional (Random Effects meta analysis)
+# Two level unconditional (Random Effects meta analysis)
 rmeta = meta(y = a1,v = a1_SE^2, data = df)
 summary(rmeta)
 
-# three level unconditional (intercept only)
-Model0 = meta3(y = a1,v = a1_SE^2,cluster = DataID,data = df,model.name = "3 level model")
+
+# Three level unconditional (intercept only)
+Model0 = meta3(y = a1, v = a1_SE^2, cluster = DataID, data = df, model.name = "3 level model")
 summary(Model0)
 
 # Three level US vs. Other
-Model1 = meta3(y = a1,v = a1_SE^2,x = US,cluster = DataID,data = df,model.name = "3 level model")
+Model1 = meta3(y = a1, v = a1_SE^2, x = US, cluster = DataID, data = df, model.name = "3 level model")
 summary(Model1)
 
-
-#weighted histogram
-p = ggplot(df,aes(x=a1,weight=1/(k*a1_SE^2)))
-p = p + geom_histogram(col="black",fill="light grey",bins = 15)
-p = p +labs(x = "Effect size", y = "Weighted count") + xlim(c(-.2, .2))
-p = p + theme_base() + theme(plot.background = element_rect( color= "white"))
-p
+# Weighted histogram
+p = ggplot(df, aes(x = a1, weight = 1/(k * a1_SE^2))) + geom_histogram(col="black", fill = "light grey", bins = 15)
+p = p + labs(x = "Effect size", y = "Weighted count") + xlim(c(-.2, .2))
+p = p + theme_base() + theme(plot.background = element_rect( color = "white"))
+# p + theme_bw()
 
 # Weighted histogram US and not US (weight = reciprocal sampling variance)
-
-plotUS = ggplot(dfUS, aes(x = a1, weight = 1/(a1_SE^2)))
-plotUS = plotUS + geom_histogram(col = "black", fill = "light grey")
+plotUS = ggplot(dfUS, aes(x = a1, weight = 1/(a1_SE^2))) + geom_histogram(col = "black", fill = "light grey", binwidth = .025)
+# plotUS = plotUS + ggtitle("United States")
 plotUS = plotUS + labs(x = "Effect size", y = "Weighted count")
 plotUS = plotUS + xlim(c(-.3, .3))
-plotUS = plotUS + theme_base() + theme(plot.background = element_rect( color= "white")) + ggtitle("United States")
+# plotUS = plotUS + theme_bw()
+plotUS = plotUS + theme_base() + theme(plot.background = element_rect( color= "white"))
 plotUS = plotUS + theme(plot.title = element_text(hjust = 0.5))
 
-plotEU = ggplot(dfEU, aes(x = a1, weight = 1/(a1_SE^2)))
-plotEU = plotEU + geom_histogram(col = "black",fill = "light grey")
-plotEU = plotEU + ggtitle("Europe and Australia")
-plotEU = plotEU + labs(x = "Effect size", y= "Weighted count") + ggtitle("Europe and Australia")
+plotEU = ggplot(dfEU, aes(x = a1, weight = 1/(a1_SE^2))) + geom_histogram(col = "black",fill = "light grey", binwidth = .025)
+# plotEU = plotEU + ggtitle("Europe and Australia")
+plotEU = plotEU + labs(x = "Effect size", y= "Weighted count")
 plotEU = plotEU + xlim(c(-.3, .3))
-plotEU = plotEU + theme_base() + theme(plot.background = element_rect(color = "white")) 
+# plotEU = plotEU + theme_bw()
+plotEU = plotEU + theme_base() + theme(plot.background = element_rect(color = "white"))
 plotEU = plotEU + theme(plot.title = element_text(hjust = 0.5))
 
-multiplot(plotUS, plotEU)
+# both
+p = ggplot(df, aes(x = a1, weight = 1/(a1_SE^2), fill = factor(US))) + geom_histogram(alpha = 0.2, position = "identity", bins=15)
+p = p + labs(x = "Effect size", y= "Weighted count")
+p = p + xlim(c(-.3, .3))
+p = p + theme_bw()
+p = p + theme_base() + theme(plot.background = element_rect(color = "white"))
+p = p + theme(plot.title = element_text(hjust = 0.5))
 
+cowplot::plot_grid(plotUS, plotEU, labels = c("United States", "Europe and Australia"), align = "v")
+
+metafor::forest(rma(yi = a1, sei = a1_SE, data=df[df$US==1,]))
+metafor::forest(rma(yi = a1, sei = a1_SE, data=df[df$US==0,]))
+
+
+, annotate=TRUE, showweights=FALSE,
+       xlim, alim, clim, ylim, at, steps=5,
+       level=95, refline=0, digits=2L, width,
+       xlab, slab, ilab, ilab.xpos, ilab.pos,
+       subset, transf, atransf, targs, rows,
+       efac=1, pch=15, psize, col, lty,
+       cex, cex.lab, cex.axis, annosym, ...)
+	   
 # Weighted histogram US and not US (weights = reciprocal sampling variance and 1/k)
-binwidth
+
 plotUS = ggplot(dfUS, aes(x = a1, weight = 1/(k*a1_SE^2)))
 plotUS = plotUS + geom_histogram(col = "black",fill = "light grey")
 plotUS = plotUS + labs(x = "Effect size", y = "Weighted count")

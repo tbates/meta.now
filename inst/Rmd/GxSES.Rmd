@@ -10,21 +10,16 @@ library("cowplot"); # ggplot enhancer
 
 me = "GxSES"
 genbib = RefManageR::ReadBib(system.file("extdata", "general.bib", package = "meta.now"))
-# 1. open the bib for this project
+
+# Assumes mn_update_data() has been run
+# Read in the overall file
+df = gdata::read.xls(paste0(path, "/", "data_GxSES.xlsx"), stringsAsFactors = FALSE)
+str(df)
+
+# 2. open the bib for this project
 bib = ReadBib(system.file(paste0("extdata/", me), paste0("bib_", me, ".bib"), package = "meta.now"), check = FALSE)
 BibOptions(check.entries = FALSE, style = "markdown", cite.style = "authoryear", bib.style = "numeric")
 
-# 2. open the meta-file for this project
-# meta_make()
-df = gdata::read.xls(system.file(paste0("extdata/", me), paste0("data_", me, ".xlsx"), package = "meta.now"), stringsAsFactors=FALSE)
-# replace spaces (which are imported as periods) with "_"
-df = umx_rename(df, "_", grep="\\.");
-# Make US and non US data sets
-dfUS = df[df$US == 1, ]
-dfEU = df[df$US == 0, ]
-
-
-# 3. # TODO Check it's all up to date
 	
 ```
 ## Introduction

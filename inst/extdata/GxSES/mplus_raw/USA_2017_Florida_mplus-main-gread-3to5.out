@@ -1,0 +1,515 @@
+Mplus VERSION 7.31 (Linux)
+MUTHEN & MUTHEN
+09/14/2017   3:18 PM
+
+INPUT INSTRUCTIONS
+
+  DATA: FILE IS "twins-mp-all4-g35.dat";
+
+  VARIABLE:
+
+  NAMES ARE
+  id_twin
+  id1
+  id2
+  grade
+  ZYG
+  m
+  y1a
+  y2a
+  y1b
+  y2b
+  y1c
+  y2c
+  y1d
+  y2d;
+
+  MISSING ARE ALL (-9999);
+
+  USEVARIABLES ARE m y1c y2c; !
+
+  CONSTRAINT IS m;
+
+
+  GROUPING IS ZYG (1=SS 2=OS); !
+
+  ANALYSIS:
+  MODEL = NOCOVARIANCES;
+
+  MODEL:
+  !ACE's
+  A1 by y1c*(a); A1@1; [A1@0];!create latent A variable for twin 1
+  A2 by y2c*(a); A2@1; [A2@0];!create latent A variable for twin 2
+
+  C by y1c*5(c); C@1;  [C@0];!create latent C variable, which is the same for twin1 and twin
+  C by y2c*5(c);
+
+  E1 by y1c*(e); E1@1; [E1@0];!create latent E variable for twin 1
+  E2 by y2c*(e); E2@1; [E2@0];!create latent E variable for twin 2
+
+  y1c@0;!no residual variance in IQ as all variance is explained by ACE
+  y2c@0;!no residual variance in IQ as all variance is explained by ACE
+
+
+  !covary out SES main effect
+  y1c ON m*(b);
+  y2c ON m*(b);
+
+  !make means equal across twins, as expected if twin # is randomly assigned
+  [y1c*](my);
+  [y2c*](my);
+
+  MODEL SS:
+  A1 WITH A2@.76; !change @1 to whatever you comput rSS to be, below. It should be about .75
+
+  MODEL OS:
+  A1 WITH A2@.5;!fixed to .5 because OS twins are necessarily DZ
+
+  [y1c*](my);
+  [y2c*](my);
+
+  MODEL CONSTRAINT:
+  NEW (a0 a1*.1 c0 c1*.1 e0 e1*.1);
+  a=a0+a1*m; !a1 is moderation of the a path by m (i.e. SES)
+  c=c0+c1*m; !c1 is moderation of the c path by m (i.e. SES)
+  e=e0+e1*m; !c1 is moderation of the e path by m (i.e. SES)
+
+  OUTPUT:
+  SAMPSTAT; CINTERVAL;
+
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 2
+Number of observations
+   Group SS                                                  23313
+   Group OS                                                  11119
+   Total sample size                                         34432
+
+Number of dependent variables                                    2
+Number of independent variables                                  1
+Number of continuous latent variables                            5
+
+Observed dependent variables
+
+  Continuous
+   Y1C         Y2C
+
+Observed independent variables
+   M
+
+Continuous latent variables
+   A1          A2          C           E1          E2
+
+Variables with special functions
+
+  Grouping variable     ZYG
+
+Estimator                                                       ML
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  twins-mp-all4-g35.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+   Group SS
+     Number of missing data patterns             1
+
+   Group OS
+     Number of missing data patterns             1
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT FOR SS
+
+
+           Covariance Coverage
+              Y1C           Y2C           M
+              ________      ________      ________
+ Y1C            1.000
+ Y2C            1.000         1.000
+ M              1.000         1.000         1.000
+
+
+     PROPORTION OF DATA PRESENT FOR OS
+
+
+           Covariance Coverage
+              Y1C           Y2C           M
+              ________      ________      ________
+ Y1C            1.000
+ Y2C            1.000         1.000
+ M              1.000         1.000         1.000
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS FOR SS
+
+
+           Means
+              Y1C           Y2C           M
+              ________      ________      ________
+      1        -0.021        -0.023        -0.009
+
+
+           Covariances
+              Y1C           Y2C           M
+              ________      ________      ________
+ Y1C            0.999
+ Y2C            0.627         1.006
+ M              0.359         0.360         1.011
+
+
+           Correlations
+              Y1C           Y2C           M
+              ________      ________      ________
+ Y1C            1.000
+ Y2C            0.626         1.000
+ M              0.357         0.357         1.000
+
+
+     ESTIMATED SAMPLE STATISTICS FOR OS
+
+
+           Means
+              Y1C           Y2C           M
+              ________      ________      ________
+      1        -0.009         0.003         0.044
+
+
+           Covariances
+              Y1C           Y2C           M
+              ________      ________      ________
+ Y1C            1.004
+ Y2C            0.490         1.019
+ M              0.383         0.377         0.979
+
+
+           Correlations
+              Y1C           Y2C           M
+              ________      ________      ________
+ Y1C            1.000
+ Y2C            0.484         1.000
+ M              0.387         0.377         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -136284.994
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS FOR SS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     Y1C                  -0.021      -0.321      -4.862    0.00%      -0.764     -0.199      0.024
+           23313.000       0.999       1.213       3.559    0.01%       0.245      0.751
+     Y2C                  -0.023      -0.348      -4.854    0.01%      -0.753     -0.205      0.022
+           23313.000       1.006       1.319       3.541    0.02%       0.241      0.747
+     M                    -0.009      -0.427      -5.662    0.08%      -0.501     -0.501     -0.501
+           23313.000       1.011       1.390       1.649    7.92%       0.359      1.219
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS FOR OS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     Y1C                  -0.009      -0.270      -4.402    0.01%      -0.754     -0.200      0.013
+           11119.000       1.004       1.122       3.559    0.03%       0.240      0.772
+     Y2C                   0.003      -0.193      -4.423    0.01%      -0.759     -0.197      0.036
+           11119.000       1.019       1.157       3.596    0.01%       0.255      0.781
+     M                     0.044      -0.257      -4.802    0.05%      -0.501     -0.501     -0.071
+           11119.000       0.979       0.436       1.649    8.83%       0.359      1.219
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                        8
+
+Loglikelihood
+
+          H0 Value                      -87337.633
+
+Information Criteria
+
+          Akaike (AIC)                  174691.266
+          Bayesian (BIC)                174758.840
+          Sample-Size Adjusted BIC      174733.416
+            (n* = (n + 2) / 24)
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Group SS
+
+ A1       BY
+    Y1C              999.000      0.000    999.000    999.000
+
+ A2       BY
+    Y2C              999.000      0.000    999.000    999.000
+
+ C        BY
+    Y1C              999.000      0.000    999.000    999.000
+    Y2C              999.000      0.000    999.000    999.000
+
+ E1       BY
+    Y1C              999.000      0.000    999.000    999.000
+
+ E2       BY
+    Y2C              999.000      0.000    999.000    999.000
+
+ Y1C      ON
+    M                  0.386      0.005     82.475      0.000
+
+ Y2C      ON
+    M                  0.386      0.005     82.475      0.000
+
+ A1       WITH
+    A2                 0.760      0.000    999.000    999.000
+
+ Means
+    A1                 0.000      0.000    999.000    999.000
+    A2                 0.000      0.000    999.000    999.000
+    C                  0.000      0.000    999.000    999.000
+    E1                 0.000      0.000    999.000    999.000
+    E2                 0.000      0.000    999.000    999.000
+
+ Intercepts
+    Y1C               -0.023      0.004     -5.257      0.000
+    Y2C               -0.023      0.004     -5.257      0.000
+
+ Variances
+    A1                 1.000      0.000    999.000    999.000
+    A2                 1.000      0.000    999.000    999.000
+    C                  1.000      0.000    999.000    999.000
+    E1                 1.000      0.000    999.000    999.000
+    E2                 1.000      0.000    999.000    999.000
+
+ Residual Variances
+    Y1C                0.000      0.000    999.000    999.000
+    Y2C                0.000      0.000    999.000    999.000
+
+Group OS
+
+ A1       BY
+    Y1C              999.000      0.000    999.000    999.000
+
+ A2       BY
+    Y2C              999.000      0.000    999.000    999.000
+
+ C        BY
+    Y1C              999.000      0.000    999.000    999.000
+    Y2C              999.000      0.000    999.000    999.000
+
+ E1       BY
+    Y1C              999.000      0.000    999.000    999.000
+
+ E2       BY
+    Y2C              999.000      0.000    999.000    999.000
+
+ Y1C      ON
+    M                  0.386      0.005     82.475      0.000
+
+ Y2C      ON
+    M                  0.386      0.005     82.475      0.000
+
+ A1       WITH
+    A2                 0.500      0.000    999.000    999.000
+
+ Means
+    A1                 0.000      0.000    999.000    999.000
+    A2                 0.000      0.000    999.000    999.000
+    C                  0.000      0.000    999.000    999.000
+    E1                 0.000      0.000    999.000    999.000
+    E2                 0.000      0.000    999.000    999.000
+
+ Intercepts
+    Y1C               -0.023      0.004     -5.257      0.000
+    Y2C               -0.023      0.004     -5.257      0.000
+
+ Variances
+    A1                 1.000      0.000    999.000    999.000
+    A2                 1.000      0.000    999.000    999.000
+    C                  1.000      0.000    999.000    999.000
+    E1                 1.000      0.000    999.000    999.000
+    E2                 1.000      0.000    999.000    999.000
+
+ Residual Variances
+    Y1C                0.000      0.000    999.000    999.000
+    Y2C                0.000      0.000    999.000    999.000
+
+New/Additional Parameters
+    A0                 0.787      0.009     84.560      0.000
+    A1                -0.030      0.022     -1.363      0.173
+    C0                -0.054      0.087     -0.618      0.537
+    C1                 0.151      0.012     12.149      0.000
+    E0                 0.473      0.006     76.358      0.000
+    E1                 0.016      0.011      1.477      0.140
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.577E-05
+       (ratio of smallest to largest eigenvalue)
+
+
+CONFIDENCE INTERVALS OF MODEL RESULTS
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Group SS
+
+ A1       BY
+    Y1C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+
+ A2       BY
+    Y2C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+
+ C        BY
+    Y1C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+    Y2C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+
+ E1       BY
+    Y1C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+
+ E2       BY
+    Y2C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+
+ Y1C      ON
+    M                0.373       0.376       0.378       0.386       0.393       0.395       0.398
+
+ Y2C      ON
+    M                0.373       0.376       0.378       0.386       0.393       0.395       0.398
+
+ A1       WITH
+    A2               0.760       0.760       0.760       0.760       0.760       0.760       0.760
+
+ Means
+    A1               0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    A2               0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    C                0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    E1               0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    E2               0.000       0.000       0.000       0.000       0.000       0.000       0.000
+
+ Intercepts
+    Y1C             -0.034      -0.032      -0.030      -0.023      -0.016      -0.014      -0.012
+    Y2C             -0.034      -0.032      -0.030      -0.023      -0.016      -0.014      -0.012
+
+ Variances
+    A1               1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    A2               1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    C                1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    E1               1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    E2               1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    Y1C              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    Y2C              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+
+Group OS
+
+ A1       BY
+    Y1C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+
+ A2       BY
+    Y2C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+
+ C        BY
+    Y1C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+    Y2C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+
+ E1       BY
+    Y1C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+
+ E2       BY
+    Y2C            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+
+ Y1C      ON
+    M                0.373       0.376       0.378       0.386       0.393       0.395       0.398
+
+ Y2C      ON
+    M                0.373       0.376       0.378       0.386       0.393       0.395       0.398
+
+ A1       WITH
+    A2               0.500       0.500       0.500       0.500       0.500       0.500       0.500
+
+ Means
+    A1               0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    A2               0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    C                0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    E1               0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    E2               0.000       0.000       0.000       0.000       0.000       0.000       0.000
+
+ Intercepts
+    Y1C             -0.034      -0.032      -0.030      -0.023      -0.016      -0.014      -0.012
+    Y2C             -0.034      -0.032      -0.030      -0.023      -0.016      -0.014      -0.012
+
+ Variances
+    A1               1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    A2               1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    C                1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    E1               1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    E2               1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    Y1C              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    Y2C              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+
+New/Additional Parameters
+    A0               0.763       0.769       0.772       0.787       0.803       0.806       0.811
+    A1              -0.087      -0.073      -0.066      -0.030       0.006       0.013       0.027
+    C0              -0.278      -0.225      -0.197      -0.054       0.089       0.117       0.171
+    C1               0.119       0.126       0.130       0.151       0.171       0.175       0.183
+    E0               0.457       0.461       0.463       0.473       0.483       0.485       0.489
+    E1              -0.012      -0.005      -0.002       0.016       0.034       0.037       0.044
+
+
+     Beginning Time:  15:18:18
+        Ending Time:  15:21:07
+       Elapsed Time:  00:02:49
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2015 Muthen & Muthen
